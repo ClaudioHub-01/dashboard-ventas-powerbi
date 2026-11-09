@@ -1,0 +1,240 @@
+table Medidas
+	lineageTag: 130d529f-99e7-4584-99d0-63049809b402
+
+	measure 'Ventas Brutas' =
+			
+			CALCULATE (
+			    SUMX ( Ventas, Ventas[Cantidad] * Ventas[PrecioUnitario] ),
+			    Ventas[Estado] = "Entregado"
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 91ee7c6e-3db7-4e5f-85d9-e4de22b61661
+
+		changedProperty = IsHidden
+
+		annotation PBI_FormatHint = {"currencyCulture":"es-US"}
+
+	measure Descuentos =
+			
+			CALCULATE ( SUM ( Ventas[Descuento] ), Ventas[Estado] = "Entregado" )
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: cdff0517-d855-4c94-b63a-8f144684dfb8
+
+		changedProperty = IsHidden
+
+	measure 'Ventas Netas' = ```
+			
+			[Ventas Brutas] - [Descuentos]
+			
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: ce9b76f4-3b00-4fc2-8f09-b2b086dcbba1
+
+		changedProperty = IsHidden
+
+	measure Pedidos =
+			
+			CALCULATE ( DISTINCTCOUNT ( Ventas[PedidoID] ), Ventas[Estado] = "Entregado" )
+		formatString: #,0
+		lineageTag: ed69b052-7fe1-4f17-9c5b-0c5f7ec064b0
+
+		changedProperty = IsHidden
+
+	measure Unidades =
+			
+			CALCULATE ( SUM ( Ventas[Cantidad] ), Ventas[Estado] = "Entregado" )
+		formatString: #,0
+		lineageTag: bc4bbfa3-e45f-47f3-96a9-d3f7710310fc
+
+		changedProperty = IsHidden
+
+	measure 'Ticket Promedio' =
+			
+			DIVIDE ( [Ventas Netas], [Pedidos] )
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: bf8b7043-9a68-4046-aa00-96787a0ecb28
+
+		changedProperty = IsHidden
+
+	measure '% Descuento' =
+			
+			DIVIDE ( [Descuentos], [Ventas Brutas] )
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		lineageTag: 8a3a68b1-88cb-42f9-b1da-830935cd604d
+
+		changedProperty = IsHidden
+
+	measure Costo =
+			
+			CALCULATE (
+			    SUMX ( Ventas, Ventas[Cantidad] * RELATED ( Productos[CostoUnitario] ) ),
+			    Ventas[Estado] = "Entregado"
+			)
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 41e7b89b-e708-49a2-913e-30ae0bbb6393
+
+		changedProperty = IsHidden
+
+	measure Margen =
+			
+			[Ventas Netas] - [Costo]
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: b3526a65-7ce4-4965-b2e3-eaebad2ce517
+
+		changedProperty = IsHidden
+
+	measure 'Margen %' =
+			
+			DIVIDE ( [Margen], [Ventas Netas] )
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		lineageTag: fa6b9da7-d243-4390-b96a-9b930dd6ce0d
+
+		changedProperty = IsHidden
+
+	measure 'Ventas Año Anterior' = CALCULATE ( [Ventas Netas], SAMEPERIODLASTYEAR ( Calendario[Date] ) )
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 986f9c7d-5ab8-432a-a8ac-15446d6810df
+
+		changedProperty = IsHidden
+
+	measure 'Var % Año Anterior' =
+			
+			DIVIDE ( [Ventas Netas] - [Ventas Año Anterior], [Ventas Año Anterior] )
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		lineageTag: cb68e5d1-17d0-4dc3-beb0-f03ab49cd73f
+
+		changedProperty = IsHidden
+
+	measure Meta =
+			
+			SUM ( Metas[MetaVentas] )
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 488a641a-a631-4343-b3c3-06933627b0b1
+
+		changedProperty = IsHidden
+
+	measure '% Cumplimiento Meta' =
+			
+			DIVIDE ( [Ventas Netas], [Meta] )
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		lineageTag: 446d6dbf-0b72-4c08-ac0d-782c39d837eb
+
+		changedProperty = IsHidden
+
+	measure 'Ventas Acumuladas Año' =
+			
+			TOTALYTD ( [Ventas Netas], Calendario[Date] )
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: ad121a53-4ef1-45fb-9461-d6dc71de6845
+
+		changedProperty = IsHidden
+
+	measure 'Pedidos Devueltos' =
+			
+			CALCULATE ( DISTINCTCOUNT ( Ventas[PedidoID] ), Ventas[Estado] = "Devuelto" )
+		formatString: #,0
+		lineageTag: 05952fae-40f0-4a2e-a71d-d4dd893989d2
+
+		changedProperty = IsHidden
+
+	measure 'Tasa Devolución' =
+			
+			DIVIDE (
+			    [Pedidos Devueltos],
+			    CALCULATE ( DISTINCTCOUNT ( Ventas[PedidoID] ), Ventas[Estado] IN { "Entregado", "Devuelto" } )
+			)
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		lineageTag: 13b6359a-7dc4-4111-ad48-e5839c0f12a4
+
+		changedProperty = IsHidden
+
+	measure 'Clientes Activos' =
+			
+			CALCULATE ( DISTINCTCOUNT ( Ventas[ClienteID] ), Ventas[Estado] = "Entregado" )
+		formatString: #,0
+		lineageTag: b179f0fe-3b61-406d-bc58-bf5a7c3ec9ca
+
+		changedProperty = IsHidden
+
+	measure 'Clientes Nuevos' =
+			
+			VAR ClientesPeriodo =
+			    CALCULATETABLE ( VALUES ( Ventas[ClienteID] ), Ventas[Estado] = "Entregado" )
+			VAR InicioPeriodo =
+			    MIN ( Calendario[Date] )
+			RETURN
+			    COUNTROWS (
+			        FILTER (
+			            ClientesPeriodo,
+			            CALCULATE (
+			                MIN ( Ventas[Fecha] ),
+			                ALL ( Calendario ),
+			                Ventas[Estado] = "Entregado"
+			            ) >= InicioPeriodo
+			        )
+			    )
+		formatString: #,0
+		lineageTag: 50b764b4-5a59-47d0-bf9d-f8b140496b22
+
+		changedProperty = IsHidden
+
+	measure 'Clientes Recurrentes' =
+			
+			[Clientes Activos] - [Clientes Nuevos]
+		formatString: #,0
+		lineageTag: 41b9add9-5585-45d7-8196-967855ca3fd8
+
+		changedProperty = IsHidden
+
+	measure '% Clientes Recurrentes' =
+			
+			DIVIDE ( [Clientes Recurrentes], [Clientes Activos] )
+		formatString: 0.0\ %;-0.0\ %;0.0\ %
+		lineageTag: 1493a4fa-5d7d-4a72-afa1-e7cd39ef55e9
+
+		changedProperty = IsHidden
+
+	measure 'Texto Var Año Anterior' = ```
+			
+			VAR v = [Var % Año Anterior]
+			RETURN
+			    IF ( ISBLANK ( v ), "Sin comparación", IF ( v >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( v ), "0.0%" ) & " vs año anterior" )
+			
+			```
+		lineageTag: 3b793d92-cf20-4eb8-a780-1c6a7a73a4a5
+
+	measure 'Color Var Año Anterior' =
+			
+			IF ( [Var % Año Anterior] >= 0, "#1E8E3E", "#D93025" )
+		lineageTag: 7b1b90e3-e4b6-4a00-a7f0-c2f04fc0f2e7
+
+	measure 'Pedidos (texto)' = FORMAT ( [Pedidos], "#,0" )
+		displayFolder: Tarjetas
+		lineageTag: 7e938f79-4eca-448a-8f69-fb8ac353222d
+
+	measure 'Clientes Activos (texto)' = FORMAT ( [Clientes Activos], "#,0" )
+		displayFolder: Tarjetas
+		lineageTag: dc517228-8b4a-432f-b4cb-246489a5432e
+
+	measure 'Clientes Nuevos (texto)' = FORMAT ( [Clientes Nuevos], "#,0" )
+		displayFolder: Tarjetas
+		lineageTag: 29ac9441-59cf-4eb2-8907-1358770c13a7
+
+	measure 'Clientes Recurrentes (texto)' = FORMAT ( [Clientes Recurrentes], "#,0" )
+		displayFolder: Tarjetas
+		lineageTag: f414d03d-a40c-45a9-8718-6796634ab0f0
+
+	partition Medidas = m
+		mode: import
+		source =
+				let
+				    Origen = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i44FAA==", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [Columna1 = _t]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(Origen,{{"Columna1", type text}}),
+				    #"Columnas quitadas" = Table.RemoveColumns(#"Tipo cambiado",{"Columna1"})
+				in
+				    #"Columnas quitadas"
+
+	changedProperty = IsHidden
+
+	annotation PBI_ResultType = Table
+

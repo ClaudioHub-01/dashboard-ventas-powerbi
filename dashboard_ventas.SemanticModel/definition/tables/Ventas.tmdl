@@ -1,0 +1,113 @@
+table Ventas
+	lineageTag: db9da583-ce37-4dbd-a095-3274e16b8477
+
+	column LineaID
+		dataType: int64
+		formatString: 0
+		lineageTag: 80c980c1-a0f4-44ba-9443-71ebd0fff971
+		summarizeBy: count
+		sourceColumn: LineaID
+
+		annotation SummarizationSetBy = Automatic
+
+	column PedidoID
+		dataType: string
+		lineageTag: 6abe3c3f-bb41-4bfc-80a9-1a4bfb2e7737
+		summarizeBy: none
+		sourceColumn: PedidoID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 298d30bf-fe7c-4018-aedc-a275e151e67f
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ClienteID
+		dataType: string
+		lineageTag: 639592c3-7f19-48a5-b282-f5d4274ba95a
+		summarizeBy: none
+		sourceColumn: ClienteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductoID
+		dataType: string
+		lineageTag: 695647ca-3919-40b2-989d-ef7d93a1bd70
+		summarizeBy: none
+		sourceColumn: ProductoID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Cantidad
+		dataType: int64
+		formatString: 0
+		lineageTag: 41a60fee-c0ae-4de3-a578-12e8a899e8f4
+		summarizeBy: sum
+		sourceColumn: Cantidad
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrecioUnitario
+		dataType: int64
+		formatString: 0
+		lineageTag: 86477496-ee5c-4adb-a3d3-08995c23a8c9
+		summarizeBy: sum
+		sourceColumn: PrecioUnitario
+
+		annotation SummarizationSetBy = Automatic
+
+	column Descuento
+		dataType: int64
+		formatString: 0
+		lineageTag: 32e40725-d83c-4b36-a6d0-99ee5ad19b31
+		summarizeBy: sum
+		sourceColumn: Descuento
+
+		annotation SummarizationSetBy = Automatic
+
+	column Canal
+		dataType: string
+		lineageTag: e424b994-01fc-418f-bd0c-4caaff6b02ff
+		summarizeBy: none
+		sourceColumn: Canal
+
+		annotation SummarizationSetBy = Automatic
+
+	column MedioPago
+		dataType: string
+		lineageTag: 792ab1ad-0f72-40c5-89a1-fd27e088e759
+		summarizeBy: none
+		sourceColumn: MedioPago
+
+		annotation SummarizationSetBy = Automatic
+
+	column Estado
+		dataType: string
+		lineageTag: a53e6695-8158-46c4-8a03-54c8052f43cc
+		summarizeBy: none
+		sourceColumn: Estado
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Ventas = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\USACH\Desktop\ClaudioHub-01\dashboard-ventas-powerbi\datos\ventas_tienda.xlsx"), null, true),
+				    Ventas_Sheet = Origen{[Item="Ventas",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Ventas_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"LineaID", Int64.Type}, {"PedidoID", type text}, {"Fecha", type date}, {"ClienteID", type text}, {"ProductoID", type text}, {"Cantidad", Int64.Type}, {"PrecioUnitario", Int64.Type}, {"Descuento", Int64.Type}, {"Canal", type text}, {"MedioPago", type text}, {"Estado", type text}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

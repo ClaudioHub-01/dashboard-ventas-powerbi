@@ -1,0 +1,38 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "cl1tarjeta0000000003",
+  "position": {
+    "x": 1160,
+    "y": 110,
+    "z": 1006,
+    "height": 150,
+    "width": 360,
+    "tabOrder": 1006
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "% Clientes Recurrentes"
+                }
+              },
+              "queryRef": "Medidas.% Clientes Recurrentes",
+              "nativeQueryRef": "% Clientes Recurrentes"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

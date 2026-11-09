@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "cl1tarjeta0000000000",
+  "position": {
+    "x": 20,
+    "y": 110,
+    "z": 1003,
+    "height": 150,
+    "width": 360,
+    "tabOrder": 1003
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Clientes Activos (texto)"
+                }
+              },
+              "queryRef": "Medidas.Clientes Activos (texto)",
+              "nativeQueryRef": "Clientes Activos (texto)",
+              "displayName": "Clientes Activos"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

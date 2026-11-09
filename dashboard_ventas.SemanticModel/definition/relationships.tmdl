@@ -1,0 +1,21 @@
+relationship 615e892b-214d-4a56-bcfb-d0b73b30197b
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Clientes.FechaRegistro
+	toColumn: LocalDateTable_1103e166-af97-40f3-b445-d6ccf84d9b5e.Date
+
+relationship e3784800-5c67-813d-c5be-e016bb51a7ed
+	fromColumn: Ventas.ProductoID
+	toColumn: Productos.ProductoID
+
+relationship ed3924a4-195d-608f-38b1-6c2a5b44a74e
+	fromColumn: Ventas.ClienteID
+	toColumn: Clientes.ClienteID
+
+relationship a83fe950-31a3-a7b1-20f4-25d9b12b9794
+	fromColumn: Ventas.Fecha
+	toColumn: Calendario.Date
+
+relationship 2c2579b5-f1fb-5ed6-41db-2b5c04074ae2
+	fromColumn: Metas.Fecha
+	toColumn: Calendario.Date
+

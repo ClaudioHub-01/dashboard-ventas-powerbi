@@ -1,0 +1,60 @@
+table Productos
+	lineageTag: 2d3504cf-3b9f-4a77-b696-3fbbe86d50ee
+
+	column ProductoID
+		dataType: string
+		lineageTag: 0c27b3a3-2c2c-4b13-b9b7-fa19e9011505
+		summarizeBy: none
+		sourceColumn: ProductoID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Producto
+		dataType: string
+		lineageTag: e2fca50a-e2e0-45ff-add3-3e4fa73fed08
+		summarizeBy: none
+		sourceColumn: Producto
+
+		annotation SummarizationSetBy = Automatic
+
+	column Categoria
+		dataType: string
+		lineageTag: f75b2edd-633f-4ff6-b71d-b5d888051196
+		summarizeBy: none
+		sourceColumn: Categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column PrecioLista
+		dataType: int64
+		formatString: 0
+		lineageTag: 6438202f-cf14-4738-9a60-94839da92193
+		summarizeBy: none
+		sourceColumn: PrecioLista
+
+		annotation SummarizationSetBy = Automatic
+
+	column CostoUnitario
+		dataType: int64
+		formatString: 0
+		lineageTag: 4a7b8b4b-6208-4a33-9483-cde3b335fa7a
+		summarizeBy: none
+		sourceColumn: CostoUnitario
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Productos = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\USACH\Desktop\ClaudioHub-01\dashboard-ventas-powerbi\datos\ventas_tienda.xlsx"), null, true),
+				    Productos_Sheet = Origen{[Item="Productos",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Productos_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"ProductoID", type text}, {"Producto", type text}, {"Categoria", type text}, {"PrecioLista", Int64.Type}, {"CostoUnitario", Int64.Type}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

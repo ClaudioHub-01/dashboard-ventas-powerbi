@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+# archivos locales de Power BI
+**/.pbi/localSettings.json
+**/.pbi/cache.abf

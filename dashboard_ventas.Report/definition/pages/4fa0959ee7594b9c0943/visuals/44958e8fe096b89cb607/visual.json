@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.14.0/schema.json",
+  "name": "44958e8fe096b89cb607",
+  "position": {
+    "x": 400,
+    "y": 110,
+    "z": 1004,
+    "height": 150,
+    "width": 360,
+    "tabOrder": 1004
+  },
+  "visual": {
+    "visualType": "cardVisual",
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "Medidas"
+                    }
+                  },
+                  "Property": "Pedidos (texto)"
+                }
+              },
+              "queryRef": "Medidas.Pedidos (texto)",
+              "nativeQueryRef": "Pedidos (texto)",
+              "displayName": "Pedidos"
+            }
+          ]
+        }
+      }
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

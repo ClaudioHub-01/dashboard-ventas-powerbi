@@ -1,0 +1,100 @@
+{
+  "version": "1.1.0",
+  "diagrams": [
+    {
+      "ordinal": 0,
+      "scrollPosition": {
+        "x": 0,
+        "y": 26
+      },
+      "nodes": [
+        {
+          "location": {
+            "x": 407.38305001469371,
+            "y": 562
+          },
+          "nodeIndex": "Clientes",
+          "nodeLineageTag": "a026317f-671b-40e5-8f4a-5d5c67476f0a",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 1
+        },
+        {
+          "location": {
+            "x": 866.38305001469382,
+            "y": 0
+          },
+          "nodeIndex": "Metas",
+          "nodeLineageTag": "1bbe707e-af8e-42cb-a5f5-ace8d35fc7ba",
+          "size": {
+            "height": 128,
+            "width": 234
+          },
+          "zIndex": 2
+        },
+        {
+          "location": {
+            "x": 45,
+            "y": 204
+          },
+          "nodeIndex": "Productos",
+          "nodeLineageTag": "2d3504cf-3b9f-4a77-b696-3fbbe86d50ee",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 4
+        },
+        {
+          "location": {
+            "x": 433.20156119318523,
+            "y": 165
+          },
+          "nodeIndex": "Ventas",
+          "nodeLineageTag": "db9da583-ce37-4dbd-a095-3274e16b8477",
+          "size": {
+            "height": 300,
+            "width": 234
+          },
+          "zIndex": 3
+        },
+        {
+          "location": {
+            "x": 863.38305001469371,
+            "y": 259
+          },
+          "nodeIndex": "Calendario",
+          "nodeLineageTag": "c187d7c6-3c11-452c-a9df-132d04ea7530",
+          "size": {
+            "height": 200,
+            "width": 234
+          },
+          "zIndex": 5
+        },
+        {
+          "location": {
+            "x": 191.38305001469371,
+            "y": 0
+          },
+          "nodeIndex": "Medidas",
+          "nodeLineageTag": "130d529f-99e7-4584-99d0-63049809b402",
+          "size": {
+            "height": 104,
+            "width": 234
+          },
+          "zIndex": 6
+        }
+      ],
+      "name": "Todas las tablas",
+      "zoomValue": 100,
+      "pinKeyFieldsToTop": false,
+      "showExtraHeaderInfo": false,
+      "hideKeyFieldsWhenCollapsed": false,
+      "tablesLocked": false
+    }
+  ],
+  "selectedDiagram": "Todas las tablas",
+  "defaultDiagram": "Todas las tablas"
+}

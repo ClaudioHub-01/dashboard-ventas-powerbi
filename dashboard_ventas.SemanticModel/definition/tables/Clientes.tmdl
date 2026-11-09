@@ -1,0 +1,66 @@
+table Clientes
+	lineageTag: a026317f-671b-40e5-8f4a-5d5c67476f0a
+
+	column ClienteID
+		dataType: string
+		lineageTag: 4ace1759-c7bd-4afb-a47f-b330a60d9b99
+		summarizeBy: none
+		sourceColumn: ClienteID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 885ca1fa-43c2-4d54-8237-d0eebf1a914d
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Comuna
+		dataType: string
+		lineageTag: 6e417ba1-9378-478d-b89d-bc968377c309
+		summarizeBy: none
+		sourceColumn: Comuna
+
+		annotation SummarizationSetBy = Automatic
+
+	column FechaRegistro
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 0d959698-f7f2-4972-b4e9-128d4db55ef8
+		summarizeBy: none
+		sourceColumn: FechaRegistro
+
+		variation Variation
+			isDefault
+			relationship: 615e892b-214d-4a56-bcfb-d0b73b30197b
+			defaultHierarchy: LocalDateTable_1103e166-af97-40f3-b445-d6ccf84d9b5e.'Jerarquía de fechas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column CanalAdquisicion
+		dataType: string
+		lineageTag: 882b27ca-f4f2-4270-99df-c34eb450084c
+		summarizeBy: none
+		sourceColumn: CanalAdquisicion
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Clientes = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\USACH\Desktop\ClaudioHub-01\dashboard-ventas-powerbi\datos\ventas_tienda.xlsx"), null, true),
+				    Clientes_Sheet = Origen{[Item="Clientes",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Clientes_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"ClienteID", type text}, {"Region", type text}, {"Comuna", type text}, {"FechaRegistro", type date}, {"CanalAdquisicion", type text}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,92 @@
+table Calendario
+	lineageTag: c187d7c6-3c11-452c-a9df-132d04ea7530
+	dataCategory: Time
+
+	column Date
+		isKey
+		formatString: General Date
+		lineageTag: a991cac7-b1d5-4f09-96fb-b13ceb808281
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Date]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año
+		formatString: 0
+		lineageTag: 9eb9163e-f2f1-4bfd-8f41-6996fe141ddc
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Año]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Mes Num'
+		formatString: 0
+		lineageTag: 85a12f8f-1c3c-4a2b-9fca-3031b712d8d7
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mes Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Mes
+		lineageTag: 07f5cd19-3ace-417f-88ab-2fc9bd822eb6
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Mes]
+		sortByColumn: 'Mes Num'
+
+		annotation SummarizationSetBy = Automatic
+
+	column Año-Mes
+		lineageTag: 0194a825-2ce7-479a-8198-8006572b6c77
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Año-Mes]
+
+		annotation SummarizationSetBy = Automatic
+
+	column Trimestre
+		lineageTag: d1d9b655-6188-403c-b5db-ac04f830066b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Trimestre]
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día Semana'
+		lineageTag: 75f24819-39a9-4932-8e39-8617d3782f7b
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Día Semana]
+		sortByColumn: 'Día Semana Num'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Día Semana Num'
+		formatString: 0
+		lineageTag: c6f34f91-df2c-42e0-bc83-83e23d031bcb
+		summarizeBy: none
+		isNameInferred
+		sourceColumn: [Día Semana Num]
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Calendario = calculated
+		mode: import
+		source =
+				
+				ADDCOLUMNS (
+				    CALENDAR ( DATE ( 2024, 1, 1 ), MAX ( Ventas[Fecha] ) ),
+				    "Año", YEAR ( [Date] ),
+				    "Mes Num", MONTH ( [Date] ),
+				    "Mes", FORMAT ( [Date], "mmm" ),
+				    "Año-Mes", FORMAT ( [Date], "yyyy-mm" ),
+				    "Trimestre", "T" & QUARTER ( [Date] ),
+				    "Día Semana", FORMAT ( [Date], "dddd" ),
+				    "Día Semana Num", WEEKDAY ( [Date], 2 )
+				)
+
+	annotation PBI_Id = 14618e8f9cbd4e0cb7b4d2aa766ec294
+

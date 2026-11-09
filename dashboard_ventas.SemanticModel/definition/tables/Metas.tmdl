@@ -1,0 +1,38 @@
+table Metas
+	lineageTag: 1bbe707e-af8e-42cb-a5f5-ace8d35fc7ba
+
+	column Fecha
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 50cfa61f-3343-438d-b6b0-b07bc89e1523
+		summarizeBy: none
+		sourceColumn: Fecha
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column MetaVentas
+		dataType: int64
+		formatString: 0
+		lineageTag: 9d4853ec-1097-44f2-9639-3e3b3b5cb448
+		summarizeBy: sum
+		sourceColumn: MetaVentas
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Metas = m
+		mode: import
+		source =
+				let
+				    Origen = Excel.Workbook(File.Contents("C:\Users\USACH\Desktop\ClaudioHub-01\dashboard-ventas-powerbi\datos\ventas_tienda.xlsx"), null, true),
+				    Metas_Sheet = Origen{[Item="Metas",Kind="Sheet"]}[Data],
+				    #"Encabezados promovidos" = Table.PromoteHeaders(Metas_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo cambiado" = Table.TransformColumnTypes(#"Encabezados promovidos",{{"Fecha", type date}, {"MetaVentas", Int64.Type}})
+				in
+				    #"Tipo cambiado"
+
+	annotation PBI_NavigationStepName = Navegación
+
+	annotation PBI_ResultType = Table
+

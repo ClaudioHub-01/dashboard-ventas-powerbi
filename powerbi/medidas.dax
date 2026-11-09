@@ -1,0 +1,142 @@
+// =====================================================================
+//  MEDIDAS DAX - Dashboard de ventas tienda online
+//  Cópialas una por una en Power BI: Inicio > Nueva medida.
+//  Crea todas las medidas en la tabla "Medidas" (ver GUIA.md, paso 4).
+// =====================================================================
+
+
+// ---------- TABLA CALENDARIO (Modelado > Nueva tabla) ----------
+Calendario =
+ADDCOLUMNS (
+    CALENDAR ( DATE ( 2024, 1, 1 ), MAX ( Ventas[Fecha] ) ),
+    "Año", YEAR ( [Date] ),
+    "Mes Num", MONTH ( [Date] ),
+    "Mes", FORMAT ( [Date], "mmm" ),
+    "Año-Mes", FORMAT ( [Date], "yyyy-mm" ),
+    "Trimestre", "T" & QUARTER ( [Date] ),
+    "Día Semana", FORMAT ( [Date], "dddd" ),
+    "Día Semana Num", WEEKDAY ( [Date], 2 )
+)
+
+
+// ---------- VENTAS ----------
+Ventas Brutas =
+CALCULATE (
+    SUMX ( Ventas, Ventas[Cantidad] * Ventas[PrecioUnitario] ),
+    Ventas[Estado] = "Entregado"
+)
+
+Descuentos =
+CALCULATE ( SUM ( Ventas[Descuento] ), Ventas[Estado] = "Entregado" )
+
+Ventas Netas =
+[Ventas Brutas] - [Descuentos]
+
+Pedidos =
+CALCULATE ( DISTINCTCOUNT ( Ventas[PedidoID] ), Ventas[Estado] = "Entregado" )
+
+Unidades =
+CALCULATE ( SUM ( Ventas[Cantidad] ), Ventas[Estado] = "Entregado" )
+
+Ticket Promedio =
+DIVIDE ( [Ventas Netas], [Pedidos] )
+
+% Descuento =
+DIVIDE ( [Descuentos], [Ventas Brutas] )
+
+
+// ---------- RENTABILIDAD ----------
+Costo =
+CALCULATE (
+    SUMX ( Ventas, Ventas[Cantidad] * RELATED ( Productos[CostoUnitario] ) ),
+    Ventas[Estado] = "Entregado"
+)
+
+Margen =
+[Ventas Netas] - [Costo]
+
+Margen % =
+DIVIDE ( [Margen], [Ventas Netas] )
+
+
+// ---------- COMPARACIÓN Y METAS ----------
+Ventas Año Anterior =
+CALCULATE ( [Ventas Netas], SAMEPERIODLASTYEAR ( Calendario[Date] ) )
+
+Var % Año Anterior =
+DIVIDE ( [Ventas Netas] - [Ventas Año Anterior], [Ventas Año Anterior] )
+
+Meta =
+SUM ( Metas[MetaVentas] )
+
+% Cumplimiento Meta =
+DIVIDE ( [Ventas Netas], [Meta] )
+
+Ventas Acumuladas Año =
+TOTALYTD ( [Ventas Netas], Calendario[Date] )
+
+
+// ---------- DEVOLUCIONES ----------
+Pedidos Devueltos =
+CALCULATE ( DISTINCTCOUNT ( Ventas[PedidoID] ), Ventas[Estado] = "Devuelto" )
+
+Tasa Devolución =
+DIVIDE (
+    [Pedidos Devueltos],
+    CALCULATE ( DISTINCTCOUNT ( Ventas[PedidoID] ), Ventas[Estado] IN { "Entregado", "Devuelto" } )
+)
+
+
+// ---------- CLIENTES ----------
+Clientes Activos =
+CALCULATE ( DISTINCTCOUNT ( Ventas[ClienteID] ), Ventas[Estado] = "Entregado" )
+
+// Clientes cuya PRIMERA compra entregada cae dentro del período filtrado
+Clientes Nuevos =
+VAR ClientesPeriodo =
+    CALCULATETABLE ( VALUES ( Ventas[ClienteID] ), Ventas[Estado] = "Entregado" )
+VAR InicioPeriodo =
+    MIN ( Calendario[Date] )
+RETURN
+    COUNTROWS (
+        FILTER (
+            ClientesPeriodo,
+            CALCULATE (
+                MIN ( Ventas[Fecha] ),
+                ALL ( Calendario ),
+                Ventas[Estado] = "Entregado"
+            ) >= InicioPeriodo
+        )
+    )
+
+Clientes Recurrentes =
+[Clientes Activos] - [Clientes Nuevos]
+
+% Clientes Recurrentes =
+DIVIDE ( [Clientes Recurrentes], [Clientes Activos] )
+
+
+// ---------- TEXTOS DINÁMICOS (para títulos de tarjetas) ----------
+Texto Var Año Anterior =
+VAR v = [Var % Año Anterior]
+RETURN
+    IF ( ISBLANK ( v ), "Sin comparación", IF ( v >= 0, "▲ ", "▼ " ) & FORMAT ( ABS ( v ), "0.0%" ) & " vs año anterior" )
+
+Color Var Año Anterior =
+IF ( [Var % Año Anterior] >= 0, "#1E8E3E", "#D93025" )
+
+
+// ---------- TEXTOS PARA TARJETAS (carpeta "Tarjetas") ----------
+// La tarjeta de Power BI abrevia los números grandes ("4 mil").
+// Estas medidas muestran el valor completo con separador de miles (4.340).
+Pedidos (texto) =
+FORMAT ( [Pedidos], "#,0" )
+
+Clientes Activos (texto) =
+FORMAT ( [Clientes Activos], "#,0" )
+
+Clientes Nuevos (texto) =
+FORMAT ( [Clientes Nuevos], "#,0" )
+
+Clientes Recurrentes (texto) =
+FORMAT ( [Clientes Recurrentes], "#,0" )
